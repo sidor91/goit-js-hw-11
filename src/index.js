@@ -1,10 +1,8 @@
-import { fetchImages } from './fetchImages';
 import Notiflix from 'notiflix';
 import FetchImagesFromPixabay from './fetchImages';
-const fetchImagesFromPixabay = new FetchImagesFromPixabay();
-
-
+const fetchImages = new FetchImagesFromPixabay();
 const axios = require('axios').default;
+
 
 const searchForm = document.querySelector('.search-form');
 const galleryOfImages = document.querySelector('.gallery');
@@ -31,16 +29,12 @@ function renderImages(images) {
     galleryOfImages.insertAdjacentHTML('beforeend', imagesMarkup);
 }
 
-function checkLoadMoreBtnClass() {
-  if (loadMoreButton.classList.contains('is-hidden')) {
-    return;
-  }
-  loadMoreButton.classList.toggle('is-hidden');
-}
+
 
 async function onLoadMoreButtonClick() {
     try {
-      const images = await fetchImagesFromPixabay.fetchImages();
+        const images = await fetchImages.fetchImages();
+        fetchImages.incrementPage();
       renderImages(images.hits);
     } catch (error) {
       Notiflix.Notify.failure(`${error}`);
@@ -53,27 +47,49 @@ async function onLoadMoreButtonClick() {
 
 async function onFormSubmit(e) {
     e.preventDefault();
-    fetchImagesFromPixabay.page = 1;
+    fetchImages.resetPage();
     galleryOfImages.innerHTML = '';
-    fetchImagesFromPixabay.searchQuery =
-      e.currentTarget.elements.searchQuery.value.trim();
+    fetchImages.searchQuery =
+        e.currentTarget.elements.searchQuery.value.trim();
+    
   try {
-    const images = await fetchImagesFromPixabay.fetchImages();
-    console.log(images);
+      const images = await fetchImages.fetchImages();
+      fetchImages.incrementPage();
+      console.log(images);
+      
     if (images.total === 0) {
-      checkLoadMoreBtnClass();
+      checkLoadMoreBtnClass(images.total);
       return Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
     }
-
-    renderImages(images.hits);
-    if (loadMoreButton.classList.contains('is-hidden')) {
-      loadMoreButton.classList.toggle('is-hidden');
-    }
+      
+      renderImages(images.hits);
+      checkLoadMoreBtnClass(images.total);
+      
   } catch (error) {
       Notiflix.Notify.failure(`${error}`);
       console.log(error);
   }
+    
   searchForm.reset();
+}
+
+
+function checkLoadMoreBtnClass(numberOfImages) {
+    if (
+        numberOfImages === 0 &&
+        loadMoreButton.classList.contains('is-hidden')
+    ) {
+        return;
+    } else if (numberOfImages !== 0) {
+        loadMoreButton.classList.remove('is-hidden');
+        return;
+    }
+     else if (
+       numberOfImages === 0 &&
+       !loadMoreButton.classList.contains('is-hidden')
+     ) {
+       loadMoreButton.classList.add('is-hidden');
+     }
 }

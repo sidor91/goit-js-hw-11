@@ -17,9 +17,17 @@ export default class FetchImagesFromPixabay {
     const fetchUrl = await axios.get(
       `https://pixabay.com/api/?q=${this.searchQuery}&page=${this.page}&${searchParams}`
     );
-      this.page += 1;
     return fetchUrl.data;
   }
+    
+    incrementPage() {
+        this.page += 1;
+    }
+
+    resetPage() {
+        this.page = 1;
+    }
+    
     
     get query() {
         return this.searchQuery;

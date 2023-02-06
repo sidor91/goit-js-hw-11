@@ -58,10 +58,9 @@ function renderImages(images) {
         comments,
         downloads,
       }) => {
-        return `<div class="gallery__item">
-        <a href= ${largeImageURL} class="gallery__link">
+        return `<a href= ${largeImageURL} class="gallery__link">
+        <div class="gallery__item">
     <img src=${webformatURL} alt=${tag} loading="lazy" class="gallery__image"/>
-     </a>
       <div class="info">
       <p class="info-item"><b>Likes: ${likes}</b></p>
       <p class="info-item"><b>Views: ${views}</b></p>
@@ -69,6 +68,7 @@ function renderImages(images) {
       <p class="info-item"><b>Downloads: ${downloads}</b></p>
       </div>
   </div>
+  </a>
       `;
       }
     )

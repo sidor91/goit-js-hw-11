@@ -1,6 +1,5 @@
 const axios = require('axios').default; 
 
-
 export default class FetchImagesFromPixabay {
     constructor() {
         this.searchQuery = '';

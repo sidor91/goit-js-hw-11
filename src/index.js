@@ -22,6 +22,10 @@ async function onFormSubmit(e) {
   galleryOfImages.innerHTML = '';
   fetchImages.searchQuery = e.currentTarget.elements.searchQuery.value.trim();
 
+  if (fetchImages.searchQuery === '') {
+    return Notiflix.Notify.warning('Please enter a search request');
+  }
+
   try {
     const images = await fetchImages.fetchImages();
     fetchImages.incrementPage();

@@ -4,7 +4,7 @@ export default class FetchImagesFromPixabay {
     constructor() {
         this.searchQuery = '';
       this.page = 1;
-      this.perPage = 42;
+      this.perPage = 40;
   }
   async fetchImages() {
     const BASE_URL = 'https://pixabay.com/api/';

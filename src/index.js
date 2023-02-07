@@ -21,16 +21,15 @@ async function onFormSubmit(e) {
   fetchImages.resetPage();
   galleryOfImages.innerHTML = '';
   fetchImages.searchQuery = e.currentTarget.elements.searchQuery.value.trim();
-
+  
   if (fetchImages.searchQuery === '') {
     return Notiflix.Notify.warning('Please enter a search request');
   }
 
   try {
     const images = await fetchImages.fetchImages();
-    fetchImages.incrementPage();
     console.log(images);
-
+    fetchImages.incrementPage();
     if (images.total === 0) {
       checkLoadMoreBtnClass(images.total);
       return Notiflix.Notify.failure(
@@ -40,13 +39,13 @@ async function onFormSubmit(e) {
 
     Notiflix.Notify.success(`Hooray! We found ${images.totalHits} images.`);
     renderImages(images.hits);
-    checkLoadMoreBtnClass(images.total);
+    checkLoadMoreBtnClass(images.hits.length);
+    searchForm.reset();
+    
   } catch (error) {
     Notiflix.Notify.failure(`${error}`);
     console.log(error);
   }
-
-  searchForm.reset();
 }
 
 
@@ -87,6 +86,10 @@ async function onLoadMoreButtonClick() {
     const images = await fetchImages.fetchImages();
     fetchImages.incrementPage();
     renderImages(images.hits);
+    checkLoadMoreBtnClass(images.hits.length);
+    if (images.hits.length < fetchImages.perPage) {
+      return Notiflix.Notify.info('That is all what we got for you');
+    }
   } catch (error) {
     Notiflix.Notify.failure(`${error}`);
     console.log(error);
@@ -97,13 +100,16 @@ async function onLoadMoreButtonClick() {
 function checkLoadMoreBtnClass(numberOfImages) {
   if (numberOfImages === 0 && loadMoreButton.classList.contains('is-hidden')) {
     return;
-  } else if (numberOfImages !== 0) {
+  } else if (numberOfImages !== 0 && numberOfImages === fetchImages.perPage) {
     loadMoreButton.classList.remove('is-hidden');
     return;
   } else if (
     numberOfImages === 0 &&
     !loadMoreButton.classList.contains('is-hidden')
   ) {
+    loadMoreButton.classList.add('is-hidden');
+  }
+  else if (numberOfImages < fetchImages.perPage) {
     loadMoreButton.classList.add('is-hidden');
   }
 }
